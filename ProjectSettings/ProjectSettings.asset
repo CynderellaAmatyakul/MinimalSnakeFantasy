@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: 83ea7f65e20e4af46b98c23ee71fb8c6
+  productGUID: e62f1342ce500f64c8f8189f9cccae0c
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: Minimal Fantasy Snake
+  productName: MinimalFantasySnake
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -842,14 +842,14 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Minimal Fantasy Snake
+  metroPackageName: MinimalFantasySnake
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: Minimal Fantasy Snake
+  metroApplicationDescription: MinimalFantasySnake
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -917,12 +917,12 @@ PlayerSettings:
   hmiLogStartupTiming: 0
   hmiCpuConfiguration: 
   apiCompatibilityLevel: 6
-  activeInputHandler: 0
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 77a805bc-a8bb-42ba-9397-07dce9eb25b2
+  cloudProjectId: ddb631e0-3a08-4424-a233-f3984a5c123e
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Minimal Fantasy Snake 2025-06-17_15-09-01
+  projectName: MinimalFantasySnake
   organizationId: cynderella
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
