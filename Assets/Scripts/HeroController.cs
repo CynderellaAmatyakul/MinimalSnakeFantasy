@@ -43,7 +43,6 @@ public class HeroController : MonoBehaviour
         Vector2Int startPos = new Vector2Int(5, 5);
         GameObject hero = Instantiate(heroPrefab, gridManager.GridToWorld(startPos.x, startPos.y), Quaternion.identity);
         heroChain.Add(hero);
-        gridManager.SetCellContent(startPos.x, startPos.y, CellContentType.HeroBody);
     }
 
     void SetDirection(Vector2Int direction)
@@ -69,53 +68,22 @@ public class HeroController : MonoBehaviour
             yield break;
         }
 
-        CellContentType content = gridManager.GetCellContent(nextGrid.x, nextGrid.y);
-
-        switch (content)
-        {
-            case CellContentType.HeroBody:
-                Debug.Log("Game Over: Hit own body");
-                canMove = true;
-                yield break;
-
-            case CellContentType.CollectableHero:
-                Debug.Log("Collected Hero!");
-                //AddHeroToChain(); 
-                break;
-
-            case CellContentType.Monster:
-                Debug.Log("Start Battle!");
-                //StartBattle(nextGrid);
-                break;
-
-            case CellContentType.Obstacle:
-                Debug.Log("Front Hero Dead! Hit obstacle");
-                //RemoveFrontHero();
-                break;
-        }
-
-        // Move body
         for (int i = heroChain.Count - 1; i > 0; i--)
         {
             heroChain[i].transform.position = heroChain[i - 1].transform.position;
         }
 
-        // Move head
         Vector3 nextWorldPos = gridManager.GridToWorld(nextGrid.x, nextGrid.y);
         heroChain[0].transform.position = nextWorldPos;
 
-        // Rotate facing
         Vector3 facingDir = new Vector3(currentDirection.x, 0f, currentDirection.y);
         if (facingDir != Vector3.zero)
             heroChain[0].transform.rotation = Quaternion.LookRotation(facingDir);
 
-        // Update grid state
-        gridManager.SetCellContent(headGrid.x, headGrid.y, CellContentType.None);
-        gridManager.SetCellContent(nextGrid.x, nextGrid.y, CellContentType.HeroBody);
-
         yield return new WaitForSeconds(moveDelay);
         canMove = true;
     }
+
 
     void RotateLeft()
     {

@@ -98,10 +98,4 @@ public class GridManager : MonoBehaviour
         if (!IsWithinBounds(x, z)) return CellContentType.Obstacle; // treat out of bounds as wall
         return grid[x, z].contentType;
     }
-
-    public void SetCellContent(int x, int z, CellContentType type)
-    {
-        if (IsWithinBounds(x, z))
-            grid[x, z].contentType = type;
-    }
 }
