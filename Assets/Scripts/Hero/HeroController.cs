@@ -58,6 +58,7 @@ public class HeroController : MonoBehaviour
 
     void SetDirection(Vector2Int direction)
     {
+        if (!canMove) return;
         currentDirection = direction;
         StartCoroutine(Move());
     }

@@ -20,6 +20,9 @@ public class UnitStats : MonoBehaviour
     public int attack = 5;
     public int defense = 2;
 
+    [Header("Ref")]
+    public Transform healthBarAnchor;
+
     public bool IsAlive => currentHP > 0;
 
     public void Setup(UnitClass unitClass, int hp, int atk, int def)

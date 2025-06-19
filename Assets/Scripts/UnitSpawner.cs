@@ -14,6 +14,9 @@ public class UnitSpawner : MonoBehaviour
     public int baseAttack = 2;
     public int baseDefense = 1;
 
+    [Header("UI")]
+    public GameObject hpUIPrefab;
+
     private float elapsedTime = 0f;
 
     void Start()
@@ -57,6 +60,20 @@ public class UnitSpawner : MonoBehaviour
 
             stats.Setup(randomClass, hp, atk, def);
             stats.unitName = isEnemy ? "Enemy_" + Time.frameCount : "Hero_" + Time.frameCount;
+
+            UnitHealthUI ui = unitGO.GetComponentInChildren<UnitHealthUI>();
+
+            if (ui != null)
+            {
+                ui.followTarget = stats.healthBarAnchor;
+            }
+            else if (hpUIPrefab != null)
+            {
+                GameObject hpUI = Instantiate(hpUIPrefab);
+                ui = hpUI.GetComponent<UnitHealthUI>();
+                ui.followTarget = stats.healthBarAnchor;
+                hpUI.transform.SetParent(unitGO.transform);
+            }
         }
 
         gridManager.SetCellContent(cell.x, cell.z, isEnemy ? CellContentType.Monster : CellContentType.CollectableHero);

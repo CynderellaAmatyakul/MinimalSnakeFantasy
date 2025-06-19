@@ -189,10 +189,12 @@ MonoBehaviour:
     type: 3}
   enemyPrefab: {fileID: 8207240881528576110, guid: e31f4e4e8c405644ba7e92866add5f29,
     type: 3}
-  spawnInterval: 5
-  baseHP: 10
-  baseAttack: 5
-  baseDefense: 2
+  spawnInterval: 10
+  baseHP: 5
+  baseAttack: 3
+  baseDefense: 1
+  hpUIPrefab: {fileID: 6930817332058209985, guid: d420a3de37503d147956fc71a259fbb4,
+    type: 3}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
