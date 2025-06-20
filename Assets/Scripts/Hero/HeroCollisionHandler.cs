@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class HeroCollisionHandler : MonoBehaviour
@@ -45,10 +46,19 @@ public class HeroCollisionHandler : MonoBehaviour
             }
         }
 
-        if (other.CompareTag("Obstacle"))
+        if (other.CompareTag("Obstacle") && gameObject.CompareTag("Hero"))
         {
             Debug.Log("Hit obstacle. Front hero dies.");
-            // RemoveFrontHero();
+
+            if (ownerController != null)
+            {
+                ownerController.RemoveFrontHero();
+            }
+        }
+
+        if (other.GetComponent<ItemPickup>() && gameObject.CompareTag("Hero"))
+        {
+            Debug.Log("Picked up item.");
         }
     }
 }

@@ -9,6 +9,7 @@ TagManager:
   - Collectable
   - Obstacle
   - Enemy
+  - Item
   layers:
   - Default
   - TransparentFX

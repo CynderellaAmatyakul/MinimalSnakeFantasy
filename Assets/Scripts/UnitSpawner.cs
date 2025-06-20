@@ -9,7 +9,8 @@ public class UnitSpawner : MonoBehaviour
     [Header("Spawn Settings")]
     public GameObject collectableHeroPrefab;
     public GameObject enemyPrefab;
-    public float spawnInterval = 5f;
+    public float heroSpawnInterval = 20f;
+    public float enemySpawnInterval = 10f;
     public int baseHP = 5;
     public int baseAttack = 2;
     public int baseDefense = 1;
@@ -21,17 +22,26 @@ public class UnitSpawner : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(SpawnLoop());
+        StartCoroutine(HeroSpawnLoop());
+        StartCoroutine(EnemySpawnLoop());
     }
 
-    IEnumerator SpawnLoop()
+    IEnumerator HeroSpawnLoop()
     {
         while (true)
         {
-            yield return new WaitForSeconds(spawnInterval);
-            elapsedTime += spawnInterval;
-
+            yield return new WaitForSeconds(heroSpawnInterval);
+            elapsedTime += heroSpawnInterval;
             TrySpawnUnit(collectableHeroPrefab, isEnemy: false);
+        }
+    }
+
+    IEnumerator EnemySpawnLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(enemySpawnInterval);
+            elapsedTime += enemySpawnInterval;
             TrySpawnUnit(enemyPrefab, isEnemy: true);
         }
     }
@@ -52,7 +62,7 @@ public class UnitSpawner : MonoBehaviour
         if (stats != null)
         {
             //Scaling by time
-            int scale = Mathf.FloorToInt(elapsedTime / 10f); //Every 10 sec.
+            int scale = Mathf.FloorToInt(elapsedTime / 30f); //Time scaling per sec.
             int hp = baseHP + Random.Range(0, scale + 3);
             int atk = baseAttack + Random.Range(0, scale + 2);
             int def = baseDefense + Random.Range(0, scale + 2);
@@ -73,6 +83,16 @@ public class UnitSpawner : MonoBehaviour
                 ui = hpUI.GetComponent<UnitHealthUI>();
                 ui.followTarget = stats.healthBarAnchor;
                 hpUI.transform.SetParent(unitGO.transform);
+            }
+        }
+
+        if (isEnemy)
+        {
+            EnemyAI ai = unitGO.GetComponent<EnemyAI>();
+            if (ai != null)
+            {
+                ai.gridManager = gridManager;
+                ai.heroController = FindObjectOfType<HeroController>();
             }
         }
 

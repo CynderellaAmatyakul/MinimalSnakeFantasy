@@ -19,6 +19,12 @@ public class UnitStats : MonoBehaviour
     public int currentHP = 10;
     public int attack = 5;
     public int defense = 2;
+    public int level = 1;
+    public int currentXP = 0;
+    public int xpToNextLevel = 20;
+
+    //[Header("FX")]
+    //public GameObject levelUpEffect;
 
     [Header("Ref")]
     public Transform healthBarAnchor;
@@ -53,5 +59,33 @@ public class UnitStats : MonoBehaviour
         this.maxHP = source.maxHP;
         this.attack = source.attack;
         this.defense = source.defense;
+    }
+
+    public void GainXP(int amount)
+    {
+        currentXP += amount;
+        while (currentXP >= xpToNextLevel)
+        {
+            currentXP -= xpToNextLevel;
+            LevelUp();
+        }
+    }
+
+    private void LevelUp()
+    {
+        level++;
+        xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.2f);
+
+        maxHP += 5;
+        attack += 1;
+        defense += 1;
+        currentHP = maxHP;
+
+        Debug.Log($"{unitName} leveled up to {level}!");
+
+        //if (levelUpEffect != null)
+        //{
+        //    Instantiate(levelUpEffect, transform.position + Vector3.up, Quaternion.identity);
+        //}
     }
 }

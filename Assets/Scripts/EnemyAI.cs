@@ -1,0 +1,93 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class EnemyAI : MonoBehaviour
+{
+    public GridManager gridManager;
+    public HeroController heroController;
+
+    private void Start()
+    {
+        if (heroController != null)
+            heroController.RegisterEnemy(this);
+    }
+
+    private void OnDestroy()
+    {
+        if (heroController != null)
+            heroController.UnregisterEnemy(this);
+    }
+
+    public void MoveOneStepToward(Vector2Int targetGrid)
+    {
+        Debug.Log("Step Toward!");
+
+        Vector2Int start = gridManager.WorldToGrid(transform.position);
+        List<Vector2Int> path = FindPath(start, targetGrid);
+
+        if (path != null && path.Count > 1)
+        {
+            Vector2Int nextStep = path[1]; // index 0 = current
+            Vector3 nextWorld = gridManager.GridToWorld(nextStep.x, nextStep.y);
+            transform.position = nextWorld;
+
+            Vector3 dir = (nextWorld - transform.position).normalized;
+            if (dir != Vector3.zero)
+                transform.rotation = Quaternion.LookRotation(dir);
+        }
+    }
+
+    List<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
+    {
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        queue.Enqueue(start);
+
+        Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+        cameFrom[start] = start;
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+            if (current == goal) break;
+
+            foreach (Vector2Int dir in directions)
+            {
+                Vector2Int next = current + dir;
+                if (!gridManager.IsWithinBounds(next.x, next.y)) continue;
+
+                var content = gridManager.GetCellContent(next.x, next.y);
+                if (content == CellContentType.HeroBody || content == CellContentType.Obstacle)
+                    continue;
+
+                if (cameFrom.ContainsKey(next)) continue;
+
+                queue.Enqueue(next);
+                cameFrom[next] = current;
+            }
+        }
+
+        if (!cameFrom.ContainsKey(goal)) return null;
+
+        List<Vector2Int> path = new List<Vector2Int>();
+        Vector2Int step = goal;
+
+        while (step != start)
+        {
+            path.Add(step);
+            step = cameFrom[step];
+        }
+
+        path.Add(start);
+        path.Reverse();
+
+        return path;
+    }
+
+    private static readonly Vector2Int[] directions =
+    {
+        Vector2Int.up,
+        Vector2Int.down,
+        Vector2Int.left,
+        Vector2Int.right
+    };
+}

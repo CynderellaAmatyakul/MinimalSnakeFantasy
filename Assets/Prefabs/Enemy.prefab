@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 3695373678092159448}
   - component: {fileID: 1742618832187442840}
   - component: {fileID: 1144029031537359282}
+  - component: {fileID: -6502421932021805909}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -168,6 +169,9 @@ MonoBehaviour:
   currentHP: 10
   attack: 5
   defense: 2
+  level: 1
+  currentXP: 0
+  xpToNextLevel: 20
   healthBarAnchor: {fileID: 2565756243182918796}
 --- !u!136 &1144029031537359282
 CapsuleCollider:
@@ -192,6 +196,20 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-6502421932021805909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8207240881528576110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfa8e953491f9124b8f584f9ad4f565d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridManager: {fileID: 0}
+  heroController: {fileID: 0}
 --- !u!1001 &5366042513058476224
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -200,6 +218,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3695373678092159448}
     m_Modifications:
+    - target: {fileID: 680706838699488216, guid: d420a3de37503d147956fc71a259fbb4,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.11098258
+      objectReference: {fileID: 0}
+    - target: {fileID: 680706838699488216, guid: d420a3de37503d147956fc71a259fbb4,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.110982664
+      objectReference: {fileID: 0}
+    - target: {fileID: 680706838699488216, guid: d420a3de37503d147956fc71a259fbb4,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.8113208
+      objectReference: {fileID: 0}
     - target: {fileID: 687254721225357017, guid: d420a3de37503d147956fc71a259fbb4,
         type: 3}
       propertyPath: followTarget

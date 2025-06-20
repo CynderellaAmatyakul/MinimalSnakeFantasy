@@ -2,28 +2,43 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 
 public class HeroController : MonoBehaviour
 {
     [Header("References")]
     public GridManager gridManager;
     public GameObject heroPrefab;
+    public CinemachineVirtualCamera cam;
+    public List<EnemyAI> enemies = new List<EnemyAI>();
 
     [Header("Settings")]
     public float moveDelay = 0.1f;
 
-    private List<GameObject> heroChain = new List<GameObject>();
+    public List<GameObject> heroChain = new List<GameObject>();
     private Vector2Int currentDirection = Vector2Int.right;
     private bool canMove = true;
 
     private void Start()
     {
-        Vector2Int startPos = new Vector2Int(5, 5);
+        List<GridCell> freeCells = gridManager.GetAllCells().FindAll(c => c.contentType == CellContentType.None);
+
+        if (freeCells.Count == 0)
+        {
+            Debug.LogWarning("No free cell found to spawn hero!");
+            return;
+        }
+
+        GridCell spawnCell = freeCells[Random.Range(0, freeCells.Count)];
+        Vector2Int startPos = new Vector2Int(spawnCell.x, spawnCell.z);
+
         GameObject hero = Instantiate(heroPrefab, gridManager.GridToWorld(startPos.x, startPos.y), Quaternion.identity);
 
         hero.GetComponent<HeroCollisionHandler>().ownerController = this;
 
         heroChain.Add(hero);
+
+        gridManager.SetCellContent(startPos.x, startPos.y, CellContentType.HeroBody);
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -115,6 +130,17 @@ public class HeroController : MonoBehaviour
 
         yield return new WaitForSeconds(moveDelay);
         canMove = true;
+
+        StartCoroutine(MoveEnemiesAfterDelay(0.05f));
+
+        //foreach (EnemyAI enemy in enemies)
+        //{
+        //    if (enemy != null)
+        //    {
+        //        Vector2Int heroHeadGrid = gridManager.WorldToGrid(heroChain[0].transform.position);
+        //        enemy.MoveOneStepToward(heroHeadGrid);
+        //    }
+        //}
     }
 
 
@@ -138,6 +164,7 @@ public class HeroController : MonoBehaviour
         heroChain[1] = head;
 
         UpdateHeroTags();
+        UpdateCameraFollow();
     }
 
     void RotateRight()
@@ -160,6 +187,7 @@ public class HeroController : MonoBehaviour
         heroChain[heroChain.Count - 1] = head;
 
         UpdateHeroTags();
+        UpdateCameraFollow();
     }
 
     public void AddHeroToChain(UnitStats unitData)
@@ -177,6 +205,8 @@ public class HeroController : MonoBehaviour
 
         newHero.GetComponent<HeroCollisionHandler>().ownerController = this;
         heroChain.Add(newHero);
+
+        UpdateCameraFollow();
 
         Debug.Log("Added unit to chain. Chain length: " + heroChain.Count);
     }
@@ -208,6 +238,43 @@ public class HeroController : MonoBehaviour
         {
             Debug.Log("Game Over!");
             // TODO: trigger UI/game reset
+        }
+
+        UpdateCameraFollow();
+    }
+
+    void UpdateCameraFollow()
+    {
+        if (heroChain.Count > 0 && cam != null)
+            cam.Follow = heroChain[0].transform;
+    }
+
+    public void RegisterEnemy(EnemyAI enemy)
+    {
+        if (!enemies.Contains(enemy))
+            enemies.Add(enemy);
+    }
+
+    public void UnregisterEnemy(EnemyAI enemy)
+    {
+        if (enemies.Contains(enemy))
+            enemies.Remove(enemy);
+    }
+
+    IEnumerator MoveEnemiesAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (heroChain.Count == 0) yield break;
+
+        Vector2Int heroHeadGrid = gridManager.WorldToGrid(heroChain[0].transform.position);
+
+        foreach (EnemyAI enemy in enemies)
+        {
+            if (enemy != null)
+            {
+                enemy.MoveOneStepToward(heroHeadGrid);
+            }
         }
     }
 }

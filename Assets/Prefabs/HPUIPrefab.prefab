@@ -418,8 +418,7 @@ MonoBehaviour:
   hpSlider: {fileID: 1586478258812448858}
   unitNameText: {fileID: 3318336677086332841}
   statText: {fileID: 4383213877756952411}
-  followTarget: {fileID: 4454341070140250736, guid: 3375093409ab3d748b2c38f9329a6e4b,
-    type: 3}
+  followTarget: {fileID: 0}
 --- !u!1 &7990585380124179673
 GameObject:
   m_ObjectHideFlags: 0
@@ -478,7 +477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.764151, g: 0.10453011, b: 0.10453011, a: 1}
+  m_Color: {r: 0.35141352, g: 0.8490566, b: 0.1802243, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -560,7 +559,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ' ATK: 6   DEF: 2 '
+  m_text: 'LV 00
+
+    ATK: 00   DEF: 00'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

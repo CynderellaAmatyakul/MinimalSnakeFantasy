@@ -15,6 +15,11 @@ public static class BattleResolver
         {
             Debug.Log($"{defender.unitName} is defeated!");
             Object.Destroy(defender.gameObject);
+
+            if (attacker != null)
+            {
+                attacker.GainXP(7);
+            }
         }
         else if (!defender.IsAlive && defender.tag == "Hero")
         {
