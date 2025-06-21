@@ -35,7 +35,7 @@ public class UnitSpawner : MonoBehaviour
         if (timeSinceLastLevelUp >= 30f)
         {
             timeSinceLastLevelUp = 0f;
-            currentLevel = Mathf.FloorToInt(currentLevel * 1.2f);
+            currentLevel += 1;
             Debug.Log("Level Up! Current Level: " + currentLevel);
         }
     }
@@ -77,37 +77,40 @@ public class UnitSpawner : MonoBehaviour
 
         if (stats != null)
         {
-            int hp = baseHP + currentLevel + Random.Range(0, 3);
-            int atk = baseAttack + currentLevel + Random.Range(0, 2);
-            int def = baseDefense + currentLevel + Random.Range(0, 2);
-
-            stats.Setup(stats.unitClass, hp, atk, def);
-
-            UnitHealthUI ui = unitGO.GetComponentInChildren<UnitHealthUI>();
-
-            if (ui != null)
+            if (stats != null)
             {
-                ui.followTarget = stats.healthBarAnchor;
+                int hp = baseHP + currentLevel + Random.Range(0, 3);
+                int atk = baseAttack + Mathf.CeilToInt(currentLevel * 0.75f) + Random.Range(0, 2);
+                int def = baseDefense + Mathf.FloorToInt(currentLevel * 0.5f) + Random.Range(0, 2);
+
+                stats.Setup(stats.unitClass, currentLevel, hp, atk, def);
+
+                UnitHealthUI ui = unitGO.GetComponentInChildren<UnitHealthUI>();
+
+                if (ui != null)
+                {
+                    ui.followTarget = stats.healthBarAnchor;
+                }
+                else if (hpUIPrefab != null)
+                {
+                    GameObject hpUI = Instantiate(hpUIPrefab);
+                    ui = hpUI.GetComponent<UnitHealthUI>();
+                    ui.followTarget = stats.healthBarAnchor;
+                    hpUI.transform.SetParent(unitGO.transform);
+                }
             }
-            else if (hpUIPrefab != null)
+
+            if (isEnemy)
             {
-                GameObject hpUI = Instantiate(hpUIPrefab);
-                ui = hpUI.GetComponent<UnitHealthUI>();
-                ui.followTarget = stats.healthBarAnchor;
-                hpUI.transform.SetParent(unitGO.transform);
+                EnemyAI ai = unitGO.GetComponent<EnemyAI>();
+                if (ai != null)
+                {
+                    ai.gridManager = gridManager;
+                    ai.heroController = FindObjectOfType<HeroController>();
+                }
             }
+
+            gridManager.SetCellContent(cell.x, cell.z, isEnemy ? CellContentType.Monster : CellContentType.CollectableHero);
         }
-
-        if (isEnemy)
-        {
-            EnemyAI ai = unitGO.GetComponent<EnemyAI>();
-            if (ai != null)
-            {
-                ai.gridManager = gridManager;
-                ai.heroController = FindObjectOfType<HeroController>();
-            }
-        }
-
-        gridManager.SetCellContent(cell.x, cell.z, isEnemy ? CellContentType.Monster : CellContentType.CollectableHero);
     }
 }

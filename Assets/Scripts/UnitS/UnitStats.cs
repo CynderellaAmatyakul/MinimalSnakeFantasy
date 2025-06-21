@@ -31,9 +31,10 @@ public class UnitStats : MonoBehaviour
 
     public bool IsAlive => currentHP > 0;
 
-    public void Setup(UnitClass unitClass, int hp, int atk, int def)
+    public void Setup(UnitClass unitClass, int level, int hp, int atk, int def)
     {
         this.unitClass = unitClass;
+        this.level = level;
         this.maxHP = this.currentHP = hp;
         this.attack = atk;
         this.defense = def;

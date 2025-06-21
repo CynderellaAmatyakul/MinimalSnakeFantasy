@@ -10,8 +10,8 @@ public class HeroController : MonoBehaviour
     public GridManager gridManager;
     public GameObject heroPrefab;
     public CinemachineVirtualCamera cam;
-    public List<EnemyAI> enemies = new List<EnemyAI>();
     public GameController gameController;
+    public List<EnemyAI> enemies = new List<EnemyAI>();
 
     [Header("Settings")]
     public float moveDelay = 0.1f;
@@ -74,7 +74,7 @@ public class HeroController : MonoBehaviour
 
     void SetDirection(Vector2Int direction)
     {
-        if (!canMove) return;
+        if (!canMove || heroChain.Count == 0) return;
         currentDirection = direction;
         StartCoroutine(Move());
     }
@@ -88,6 +88,10 @@ public class HeroController : MonoBehaviour
         if (heroChain.Count == 0)
         {
             Debug.LogWarning("No hero remaining.");
+            canMove = true;
+
+            gameController.TriggerGameOver();
+
             yield break;
         }
 
@@ -260,7 +264,14 @@ public class HeroController : MonoBehaviour
         else
         {
             Debug.Log("Game Over!");
-            gameController.TriggerGameOver();
+            canMove = false;
+
+            if (gameController == null)
+                Debug.LogError("gameController is NULL!");
+            else
+                gameController.TriggerGameOver();
+
+            return;
         }
 
         UpdateCameraFollow();
@@ -288,7 +299,7 @@ public class HeroController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        if (heroChain.Count == 0) yield break;
+        if (heroChain.Count == 0 || heroChain[0] == null) yield break;
 
         Vector2Int heroHeadGrid = gridManager.WorldToGrid(heroChain[0].transform.position);
 

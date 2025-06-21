@@ -6,6 +6,12 @@ public class HeroCollisionHandler : MonoBehaviour
 {
     [HideInInspector] public HeroController ownerController;
 
+    public GameController gameController;
+
+    [Header("Sound Effects")]
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
+
     private void OnTriggerEnter(Collider other)
     {
         string tag = other.tag;
@@ -15,7 +21,8 @@ public class HeroCollisionHandler : MonoBehaviour
         {
             case "HeroBody":
                 Debug.Log("Game Over: Hit own body");
-                // GameOver();
+                gameController.TriggerGameOver();
+                audioSource.PlayOneShot(audioClips[0]);
                 break;
 
             case "Collectable":
@@ -25,11 +32,12 @@ public class HeroCollisionHandler : MonoBehaviour
                 {
                     ownerController.AddHeroToChain(unit);
                     Destroy(other.gameObject);
+                    audioSource.PlayOneShot(audioClips[1]);
                 }
                 break;
 
             case "Enemy":
-                if (gameObject.CompareTag("Hero"))  // ต้องแน่ใจว่าเราเป็นหัวแถว
+                if (gameObject.CompareTag("Hero"))
                 {
                     Debug.Log("Start Battle!");
                     var myStats = GetComponent<UnitStats>();
@@ -45,6 +53,8 @@ public class HeroCollisionHandler : MonoBehaviour
                             BattleResolver.Resolve(enemyStats, myStats, controller);
                         }
                     }
+
+                    audioSource.PlayOneShot(audioClips[2]);
                 }
                 break;
 
@@ -53,6 +63,8 @@ public class HeroCollisionHandler : MonoBehaviour
                 {
                     Debug.Log("Hit obstacle. Front hero dies.");
                     ownerController?.RemoveFrontHero();
+
+                    audioSource.PlayOneShot(audioClips[0]);
                 }
                 break;
 
@@ -61,6 +73,7 @@ public class HeroCollisionHandler : MonoBehaviour
                 {
                     Debug.Log("Picked up item.");
                     // ItemPickup logic will auto-run in its own script
+                    audioSource.PlayOneShot(audioClips[1]);
                 }
                 break;
 

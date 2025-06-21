@@ -15,6 +15,9 @@ public class GameController : MonoBehaviour
     {
         player = GetComponent<HeroController>();
         gameOverUI.SetActive(false);
+
+        if (gameOverUI != null)
+            gameOverUI.SetActive(false);
     }
 
     void Update()
@@ -38,7 +41,9 @@ public class GameController : MonoBehaviour
 
     public void TriggerGameOver()
     {
-        player.enabled = false;
+        Debug.Log("TriggerGameOver called");
+
+        //player.enabled = false;
 
         gameOverUI.SetActive(true);
 
@@ -53,6 +58,6 @@ public class GameController : MonoBehaviour
 
     public void QuitGame()
     {
-        Application.Quit();
+        SceneManager.LoadScene("MainMenu");
     }
 }
