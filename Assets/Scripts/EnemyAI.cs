@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -20,16 +21,24 @@ public class EnemyAI : MonoBehaviour
 
     public void MoveOneStepToward(Vector2Int targetGrid)
     {
-        Debug.Log("Step Toward!");
-
         Vector2Int start = gridManager.WorldToGrid(transform.position);
         List<Vector2Int> path = FindPath(start, targetGrid);
 
         if (path != null && path.Count > 1)
         {
-            Vector2Int nextStep = path[1]; // index 0 = current
+            Vector2Int nextStep = path[1];
+            CellContentType nextContent = gridManager.GetCellContent(nextStep.x, nextStep.y);
+
+            if (nextContent != CellContentType.None && nextContent != CellContentType.CollectableHero)
+            {
+                Debug.Log("Blocked! Enemy won't move");
+                return;
+            }
+
+            gridManager.SetCellContent(nextStep.x, nextStep.y, CellContentType.Monster);
+
             Vector3 nextWorld = gridManager.GridToWorld(nextStep.x, nextStep.y);
-            transform.position = nextWorld;
+            StartCoroutine(MoveSmoothly(nextWorld, start, nextStep));
 
             Vector3 dir = (nextWorld - transform.position).normalized;
             if (dir != Vector3.zero)
@@ -56,7 +65,7 @@ public class EnemyAI : MonoBehaviour
                 if (!gridManager.IsWithinBounds(next.x, next.y)) continue;
 
                 var content = gridManager.GetCellContent(next.x, next.y);
-                if (content == CellContentType.HeroBody || content == CellContentType.Obstacle)
+                if (content == CellContentType.HeroBody || content == CellContentType.Obstacle || content == CellContentType.Monster)
                     continue;
 
                 if (cameFrom.ContainsKey(next)) continue;
@@ -90,4 +99,22 @@ public class EnemyAI : MonoBehaviour
         Vector2Int.left,
         Vector2Int.right
     };
+
+    IEnumerator MoveSmoothly(Vector3 targetPos, Vector2Int from, Vector2Int to)
+    {
+        float speed = 5f;
+        Animator anim = GetComponentInChildren<Animator>();
+        if (anim != null) anim.SetBool("isMoving", true);
+
+        while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+            yield return null;
+        }
+
+        transform.position = targetPos;
+        if (anim != null) anim.SetBool("isMoving", false);
+
+        gridManager.SetCellContent(from.x, from.y, CellContentType.None);
+    }
 }

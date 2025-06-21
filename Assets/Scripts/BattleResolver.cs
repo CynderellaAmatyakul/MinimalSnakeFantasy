@@ -6,6 +6,16 @@ public static class BattleResolver
 {
     public static void Resolve(UnitStats attacker, UnitStats defender, HeroController heroController = null)
     {
+        // Trigger attack animation
+        if (attacker != null)
+        {
+            Animator attackerAnim = attacker.GetComponentInChildren<Animator>();
+            if (attackerAnim != null)
+            {
+                attackerAnim.SetTrigger("Attack");
+            }
+        }
+
         int damage = CalculateDamage(attacker, defender);
         defender.TakeDamage(damage);
 
@@ -14,14 +24,21 @@ public static class BattleResolver
         if (!defender.IsAlive)
         {
             Debug.Log($"{defender.unitName} is defeated!");
-            Object.Destroy(defender.gameObject);
+
+            Animator defenderAnim = defender.GetComponentInChildren<Animator>();
+            if (defenderAnim != null)
+            {
+                defenderAnim.SetBool("IsDead", true);
+            }
 
             if (attacker != null)
             {
                 attacker.GainXP(7);
             }
+
+            Object.Destroy(defender.gameObject, 1.5f); // Wait for death animation
         }
-        else if (!defender.IsAlive && defender.tag == "Hero")
+        else if (!defender.IsAlive && defender.tag == "Hero" && heroController != null)
         {
             heroController.RemoveFrontHero();
         }

@@ -44,6 +44,12 @@ public class UnitStats : MonoBehaviour
         currentHP -= amount;
         currentHP = Mathf.Max(0, currentHP);
         Debug.Log($"{unitName} took {amount} damage. HP now {currentHP}");
+
+        Animator anim = GetComponentInChildren<Animator>();
+        if (anim != null)
+        {
+            anim.SetTrigger("TakeDamage");
+        }
     }
 
     public void Heal(int amount)

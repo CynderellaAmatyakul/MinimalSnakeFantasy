@@ -83,9 +83,7 @@ public class HeroController : MonoBehaviour
         if (!canMove) yield break;
         canMove = false;
 
-        //Normalize list
         heroChain.RemoveAll(h => h == null);
-
         if (heroChain.Count == 0)
         {
             Debug.LogWarning("No hero remaining.");
@@ -93,12 +91,6 @@ public class HeroController : MonoBehaviour
         }
 
         GameObject head = heroChain[0];
-        if (head == null)
-        {
-            Debug.LogWarning("Head is null.");
-            yield break;
-        }
-
         Vector3 headPos = head.transform.position;
         Vector2Int headGrid = gridManager.WorldToGrid(headPos);
         Vector2Int nextGrid = headGrid + currentDirection;
@@ -110,39 +102,48 @@ public class HeroController : MonoBehaviour
             yield break;
         }
 
-        // Move body
-        for (int i = heroChain.Count - 1; i > 0; i--)
+        // Store previous positions BEFORE moving
+        List<Vector3> previousPositions = new List<Vector3>();
+        foreach (GameObject unit in heroChain)
+            previousPositions.Add(unit.transform.position);
+
+        // Head rotation
+        Vector3 facingDir = new Vector3(currentDirection.x, 0f, currentDirection.y);
+        Quaternion targetRotation = Quaternion.LookRotation(facingDir);
+        float turnSpeed = 10f;
+        while (Quaternion.Angle(head.transform.rotation, targetRotation) > 1f)
         {
-            if (heroChain[i] != null && heroChain[i - 1] != null)
-            {
-                heroChain[i].transform.position = heroChain[i - 1].transform.position;
-            }
+            head.transform.rotation = Quaternion.Slerp(head.transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+            yield return null;
         }
 
-        // Move head
+        // Move Head
         Vector3 nextWorldPos = gridManager.GridToWorld(nextGrid.x, nextGrid.y);
-        head.transform.position = nextWorldPos;
+        yield return StartCoroutine(MoveSmoothly(head, nextWorldPos));
 
-        // Face direction
-        Vector3 facingDir = new Vector3(currentDirection.x, 0f, currentDirection.y);
-        if (facingDir != Vector3.zero)
-            head.transform.rotation = Quaternion.LookRotation(facingDir);
+        // Move body one by one (smooth)
+        for (int i = 1; i < heroChain.Count && i < previousPositions.Count; i++)
+        {
+            GameObject current = heroChain[i];
+            Vector3 target = previousPositions[i - 1];
+
+            yield return StartCoroutine(MoveSmoothly(current, target));
+
+            // Protect from out-of-range
+            if (i < previousPositions.Count)
+            {
+                Vector3 moveDir = (target - previousPositions[i]).normalized;
+                if (moveDir != Vector3.zero)
+                    current.transform.rotation = Quaternion.LookRotation(moveDir);
+            }
+        }
 
         yield return new WaitForSeconds(moveDelay);
         canMove = true;
 
-        StartCoroutine(MoveEnemiesAfterDelay(0.05f));
-
-        //foreach (EnemyAI enemy in enemies)
-        //{
-        //    if (enemy != null)
-        //    {
-        //        Vector2Int heroHeadGrid = gridManager.WorldToGrid(heroChain[0].transform.position);
-        //        enemy.MoveOneStepToward(heroHeadGrid);
-        //    }
-        //}
+        if (heroChain.Count > 0)
+            StartCoroutine(MoveEnemiesAfterDelay(0.05f));
     }
-
 
     void RotateLeft()
     {
@@ -195,17 +196,38 @@ public class HeroController : MonoBehaviour
         GameObject tail = heroChain[heroChain.Count - 1];
         Vector3 tailPos = tail.transform.position;
 
-        GameObject newHero = Instantiate(heroPrefab, tailPos, Quaternion.identity);
+        Vector3 backDir;
+        if (heroChain.Count >= 2)
+        {
+            Vector3 secondLast = heroChain[heroChain.Count - 2].transform.position;
+            backDir = (tailPos - secondLast).normalized;
+        }
+        else
+        {
+            backDir = new Vector3(-currentDirection.x, 0f, -currentDirection.y).normalized;
+        }
 
-        // Apply data from the unit you picked up
+        Vector3 spawnPos = tailPos + backDir * gridManager.cellSize;
+
+        foreach (GameObject unit in heroChain)
+        {
+            if (Vector3.Distance(unit.transform.position, spawnPos) < 0.1f)
+            {
+                Debug.LogWarning("Spawn position overlaps existing unit. Adjusting position.");
+                spawnPos += Vector3.right * gridManager.cellSize;
+                break;
+            }
+        }
+
+        GameObject newHero = Instantiate(heroPrefab, spawnPos, Quaternion.identity);
+
         UnitStats newUnit = newHero.GetComponent<UnitStats>();
         newUnit.CopyFrom(unitData);
 
         newHero.tag = "HeroBody";
-
         newHero.GetComponent<HeroCollisionHandler>().ownerController = this;
-        heroChain.Add(newHero);
 
+        heroChain.Add(newHero);
         UpdateCameraFollow();
 
         Debug.Log("Added unit to chain. Chain length: " + heroChain.Count);
@@ -276,5 +298,21 @@ public class HeroController : MonoBehaviour
                 enemy.MoveOneStepToward(heroHeadGrid);
             }
         }
+    }
+
+    IEnumerator MoveSmoothly(GameObject obj, Vector3 targetPos)
+    {
+        float speed = 5f;
+        Animator anim = obj.GetComponentInChildren<Animator>();
+        if (anim != null) anim.SetBool("isMoving", true);
+
+        while (Vector3.Distance(obj.transform.position, targetPos) > 0.01f)
+        {
+            obj.transform.position = Vector3.MoveTowards(obj.transform.position, targetPos, speed * Time.deltaTime);
+            yield return null;
+        }
+
+        if (anim != null) anim.SetBool("isMoving", false);
+        obj.transform.position = targetPos;
     }
 }

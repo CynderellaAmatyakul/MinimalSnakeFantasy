@@ -187,15 +187,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 208508406}
-  collectableHeroPrefab: {fileID: 4432176479417554253, guid: 02d2209763c065f4da6f0016561a5147,
-    type: 3}
-  enemyPrefab: {fileID: 8207240881528576110, guid: e31f4e4e8c405644ba7e92866add5f29,
-    type: 3}
   heroSpawnInterval: 20
   enemySpawnInterval: 10
   baseHP: 5
   baseAttack: 3
   baseDefense: 1
+  collectableHeroPrefabs:
+  - {fileID: 4432176479417554253, guid: 02d2209763c065f4da6f0016561a5147, type: 3}
+  enemyPrefabs:
+  - {fileID: 8207240881528576110, guid: e31f4e4e8c405644ba7e92866add5f29, type: 3}
   hpUIPrefab: {fileID: 6930817332058209985, guid: d420a3de37503d147956fc71a259fbb4,
     type: 3}
 --- !u!114 &208508409
