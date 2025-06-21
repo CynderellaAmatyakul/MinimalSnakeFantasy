@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitName: Hero
-  unitClass: 2
+  unitClass: 0
   maxHP: 10
   currentHP: 10
   attack: 5

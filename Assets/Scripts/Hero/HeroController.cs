@@ -11,6 +11,7 @@ public class HeroController : MonoBehaviour
     public GameObject heroPrefab;
     public CinemachineVirtualCamera cam;
     public List<EnemyAI> enemies = new List<EnemyAI>();
+    public GameController gameController;
 
     [Header("Settings")]
     public float moveDelay = 0.1f;
@@ -259,7 +260,7 @@ public class HeroController : MonoBehaviour
         else
         {
             Debug.Log("Game Over!");
-            // TODO: trigger UI/game reset
+            gameController.TriggerGameOver();
         }
 
         UpdateCameraFollow();
