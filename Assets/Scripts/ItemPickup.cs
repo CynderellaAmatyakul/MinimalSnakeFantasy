@@ -19,24 +19,24 @@ public class ItemPickup : MonoBehaviour
         UnitStats stats = other.GetComponent<UnitStats>();
         if (stats == null) return;
 
-        amount = Random.Range(1, amount);
+        int actualAmount = Random.Range(1, amount);
 
-        if (itemType == ItemType.Heal)
+        switch (itemType)
         {
-            stats.Heal(amount);
-            Debug.Log($"Healed {amount} HP");
-        }
+            case ItemType.Heal:
+                stats.Heal(actualAmount);
+                Debug.Log($"Healed {actualAmount} HP");
+                break;
 
-        if (itemType == ItemType.AttackBoost)
-        {
-            stats.attack += amount;
-            Debug.Log($"Increased ATK by {amount}");
-        }
+            case ItemType.AttackBoost:
+                stats.attack += actualAmount;
+                Debug.Log($"Increased ATK by {actualAmount}");
+                break;
 
-        if (itemType == ItemType.DefenseBoost)
-        {
-            stats.defense += amount;
-            Debug.Log($"Increased DEF by {amount}");
+            case ItemType.DefenseBoost:
+                stats.defense += actualAmount;
+                Debug.Log($"Increased DEF by {actualAmount}");
+                break;
         }
 
         Destroy(gameObject);

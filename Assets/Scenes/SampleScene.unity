@@ -357,8 +357,12 @@ MonoBehaviour:
   baseDefense: 1
   collectableHeroPrefabs:
   - {fileID: 4432176479417554253, guid: 02d2209763c065f4da6f0016561a5147, type: 3}
+  - {fileID: 8407412686949736697, guid: 4c1042334a31a0848988b82f624204bd, type: 3}
+  - {fileID: 5619325744151318458, guid: 0e9e4ea7b8705ce459a8d8745f08ccd1, type: 3}
   enemyPrefabs:
   - {fileID: 8207240881528576110, guid: e31f4e4e8c405644ba7e92866add5f29, type: 3}
+  - {fileID: 1575672644433653231, guid: eb93ead7119e6bb449465248fd296275, type: 3}
+  - {fileID: 1479137888003546566, guid: 2499d3d454762154e807ad7354a457b1, type: 3}
   hpUIPrefab: {fileID: 6930817332058209985, guid: d420a3de37503d147956fc71a259fbb4,
     type: 3}
 --- !u!114 &208508409

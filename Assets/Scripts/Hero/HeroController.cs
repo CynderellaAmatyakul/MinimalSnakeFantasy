@@ -303,8 +303,10 @@ public class HeroController : MonoBehaviour
     IEnumerator MoveSmoothly(GameObject obj, Vector3 targetPos)
     {
         float speed = 5f;
+
         Animator anim = obj.GetComponentInChildren<Animator>();
-        if (anim != null) anim.SetBool("isMoving", true);
+        if (anim != null)
+            anim.SetTrigger("Move");
 
         while (Vector3.Distance(obj.transform.position, targetPos) > 0.01f)
         {
@@ -312,7 +314,6 @@ public class HeroController : MonoBehaviour
             yield return null;
         }
 
-        if (anim != null) anim.SetBool("isMoving", false);
         obj.transform.position = targetPos;
     }
 }

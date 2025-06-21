@@ -104,7 +104,9 @@ public class EnemyAI : MonoBehaviour
     {
         float speed = 5f;
         Animator anim = GetComponentInChildren<Animator>();
-        if (anim != null) anim.SetBool("isMoving", true);
+
+        if (anim != null)
+            anim.SetTrigger("Move");
 
         while (Vector3.Distance(transform.position, targetPos) > 0.01f)
         {
@@ -113,7 +115,6 @@ public class EnemyAI : MonoBehaviour
         }
 
         transform.position = targetPos;
-        if (anim != null) anim.SetBool("isMoving", false);
 
         gridManager.SetCellContent(from.x, from.y, CellContentType.None);
     }

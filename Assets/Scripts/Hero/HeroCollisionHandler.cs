@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class HeroCollisionHandler : MonoBehaviour
@@ -9,56 +8,64 @@ public class HeroCollisionHandler : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        string tag = other.tag;
         Debug.Log("Hero collided with: " + other.gameObject.name);
 
-        if (other.CompareTag("HeroBody"))
+        switch (tag)
         {
-            Debug.Log("Game Over: Hit own body");
-            // GameOver();
-        }
+            case "HeroBody":
+                Debug.Log("Game Over: Hit own body");
+                // GameOver();
+                break;
 
-        if (other.CompareTag("Collectable"))
-        {
-            Debug.Log("Collected Hero!");
-            UnitStats unit = other.GetComponent<UnitStats>();
-            if (unit != null)
-            {
-                ownerController.AddHeroToChain(unit);
-                Destroy(other.gameObject);
-            }
-        }
-
-        if (other.CompareTag("Enemy") && gameObject.tag == "Hero")
-        {
-            Debug.Log("Start Battle!");
-            var myStats = GetComponent<UnitStats>();
-            var enemyStats = other.GetComponent<UnitStats>();
-            var controller = GetComponentInParent<HeroController>();
-
-            if (myStats != null && enemyStats != null)
-            {
-                BattleResolver.Resolve(myStats, enemyStats, controller);
-
-                if (enemyStats.IsAlive)
+            case "Collectable":
+                Debug.Log("Collected Hero!");
+                UnitStats unit = other.GetComponent<UnitStats>();
+                if (unit != null)
                 {
-                    BattleResolver.Resolve(enemyStats, myStats, controller);
+                    ownerController.AddHeroToChain(unit);
+                    Destroy(other.gameObject);
                 }
-            }
-        }
+                break;
 
-        if (other.CompareTag("Obstacle") && gameObject.CompareTag("Hero"))
-        {
-            Debug.Log("Hit obstacle. Front hero dies.");
+            case "Enemy":
+                if (gameObject.CompareTag("Hero"))  // ต้องแน่ใจว่าเราเป็นหัวแถว
+                {
+                    Debug.Log("Start Battle!");
+                    var myStats = GetComponent<UnitStats>();
+                    var enemyStats = other.GetComponent<UnitStats>();
+                    var controller = GetComponentInParent<HeroController>();
 
-            if (ownerController != null)
-            {
-                ownerController.RemoveFrontHero();
-            }
-        }
+                    if (myStats != null && enemyStats != null)
+                    {
+                        BattleResolver.Resolve(myStats, enemyStats, controller);
 
-        if (other.GetComponent<ItemPickup>() && gameObject.CompareTag("Hero"))
-        {
-            Debug.Log("Picked up item.");
+                        if (enemyStats.IsAlive)
+                        {
+                            BattleResolver.Resolve(enemyStats, myStats, controller);
+                        }
+                    }
+                }
+                break;
+
+            case "Obstacle":
+                if (gameObject.CompareTag("Hero"))
+                {
+                    Debug.Log("Hit obstacle. Front hero dies.");
+                    ownerController?.RemoveFrontHero();
+                }
+                break;
+
+            case "Item":
+                if (gameObject.CompareTag("Hero"))
+                {
+                    Debug.Log("Picked up item.");
+                    // ItemPickup logic will auto-run in its own script
+                }
+                break;
+
+            default:
+                break;
         }
     }
 }

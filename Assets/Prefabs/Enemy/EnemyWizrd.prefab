@@ -82,9 +82,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: Wizard
   unitClass: 2
-  maxHP: 4
-  currentHP: 4
-  attack: 4
+  maxHP: 2
+  currentHP: 2
+  attack: 3
   defense: 1
   level: 1
   currentXP: 0
