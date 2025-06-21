@@ -29,7 +29,7 @@ public class UnitHealthUI : MonoBehaviour
         {
             UpdateHP();
 
-            statText.text = $"LV {unit.level}  ATK: {unit.attack}  DEF: {unit.defense}";
+            statText.text = $"LV {unit.level}  \nATK: {unit.attack}  DEF: {unit.defense}";
 
             transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
         }
